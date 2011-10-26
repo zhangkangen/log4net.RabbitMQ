@@ -1,5 +1,7 @@
 # log4net RabbitMQ Appender
 
+*note: I would advice moving to NLog for future applications due to the lack of upgrades to log4net*
+
 **Nuget key: `log4net.RabbitMQAppender`**
 
 An appender for logging over AMQP, specifically RabbitMQ. Why? Because sometimes you want to log with topics, without deciding on where the data/logs end up. Publish-subscribe, that is. The appender uses topics; a tutorial on topic routing, [can be found at RabbitMQ's web site](http://www.rabbitmq.com/tutorials/tutorial-five-python.html).

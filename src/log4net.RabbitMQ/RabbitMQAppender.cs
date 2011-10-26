@@ -14,7 +14,7 @@ namespace log4net.RabbitMQ
 	/// </summary>
 	public class RabbitMQAppender : AppenderSkeleton
 	{
-		private string _Exchange = "log4net-logging";
+		private string _Exchange = "app-logging";
 		private IConnection _Connection;
 		private IModel _Model;
 		private readonly Encoding _Encoding = Encoding.UTF8;
@@ -178,6 +178,9 @@ namespace log4net.RabbitMQ
 			{
 				ErrorHandler.Error("Could not start connection", e);
 			}
+
+			if (_Model == null)
+				return;
 
 			var basicProperties = GetBasicProperties(loggingEvent);
 			var message = GetMessage(loggingEvent);
