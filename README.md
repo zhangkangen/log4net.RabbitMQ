@@ -15,7 +15,7 @@ Appender properties:
  * **Topic** - `string` - what topic to publish with. It must contain a string: `{0}`, or the logger won't work. The string inserted here will be used together with `string.Format`.
  * **Protocol** - `IProtocol` - what protocol to use for RabbitMQ-communication. See also `SetProtocol`.
  * **HostName** - `string` - the host name of the computer/node to connect to. Defaults to `localhost`.
- * **Exchange** - `string` - what exchange to publish log messages to. Defaults to `log4net-logging` and is declared when the appender is started.
+ * **Exchange** - `string` - what exchange to publish log messages to. Defaults to `app-logging` and is declared when the appender is started.
  * **AppId** - `string` - the name of the publishing application
  * **ExtendedData** - `bool` - whether to include the class, file and the line of the log message as headers in `IBasicProperties`.
 
@@ -80,7 +80,7 @@ private static void Main(string[] args)
 		var consumer = new QueueingBasicConsumer(m);
 		var q = m.QueueDeclare("", false, true, true, null);
 
-		m.QueueBind(q, "log4net-logging", "#");
+		m.QueueBind(q, "app-logging", "#");
 		m.BasicConsume(q, true, consumer);
 				
 		while (true)

@@ -140,7 +140,7 @@ namespace log4net.RabbitMQ
 		/// 	Gets or sets the exchange to bind the logger output to.
 		/// </summary>
 		/// <remarks>
-		/// 	Default is 'log4net-logging'
+		/// 	Default is 'app-logging'
 		/// </remarks>
 		public string Exchange
 		{
