@@ -42,6 +42,9 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExchangeBinding.cs" />
+    <Compile Include="ExchangeProperties.cs" />
+    <Compile Include="MessageProperties.cs" />
     <Compile Include="RabbitMQAppender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -19,6 +19,8 @@ namespace log4net.RabbitMQ.Tests
         private static readonly ILog _TestLog = LogManager.GetLogger(typeof(rabbitmq_appender_spec));
         private ILoggerRepository _Rep;
 
+        private string hostName = "localhost";
+
         private ILog _Log;
         private Tuple<IModel, IConnection> _Listener;
         private RabbitMQAppender _Appender;
@@ -37,6 +39,38 @@ namespace log4net.RabbitMQ.Tests
 
             _Rep = LogManager.CreateRepository(Guid.NewGuid().ToString());
             _Appender = new RabbitMQAppender { Layout = layout };
+            _Appender.HostName = this.hostName;
+            _Appender.ActivateOptions();
+
+            BasicConfigurator.Configure(_Rep, _Appender);
+            _Log = LogManager.GetLogger(_Rep.Name, GetType());
+
+            BasicConfigurator.Configure(new ConsoleAppender { Layout = new SimpleLayout() });
+        }
+        private void ConfigureRepositoryWithLayoutWithMessageProperties(PatternLayout layout)
+        {
+            LogManager.Shutdown();
+
+            _Rep = LogManager.CreateRepository(Guid.NewGuid().ToString());
+            _Appender = new RabbitMQAppender { Layout = layout };
+            _Appender.ExchangeProperties.Name = "log4Net.RabbitMQ.Tests";
+            _Appender.ExchangeProperties.ExchangeType = "fanout";
+            _Appender.ExchangeProperties.Durable = true;
+
+            _Appender.MessageProperties.AppId = Guid.NewGuid().ToString();
+            _Appender.MessageProperties.ContentType = new PatternLayout("text/plain");
+            _Appender.MessageProperties.Persistent = true;
+            _Appender.MessageProperties.Priority = new PatternLayout("%property{priority}");
+            _Appender.MessageProperties.Topic = new PatternLayout("%property{topic}");
+
+            // An app could do something like this to customize the message priority and routing key on a message by message 
+            // basis.
+
+            ThreadContext.Properties["priority"] = "0";
+            ThreadContext.Properties["topic"] = "log4net.RabbitMQ.Tests";
+
+            _Appender.HostName = this.hostName ;
+
             _Appender.ActivateOptions();
 
             BasicConfigurator.Configure(_Rep, _Appender);
@@ -165,6 +199,41 @@ namespace log4net.RabbitMQ.Tests
             var message = Encoding.UTF8.GetString(result.Body);
             message.Satisfy(x => System.Text.RegularExpressions.Regex.IsMatch(x, @"\[\d*|TestRunnerThread\]\ .*$")
                 && x.Contains(""));
+        }
+
+        [Test, MaxTime(10000), MethodImpl(MethodImplOptions.Synchronized)]
+        public void when_logging_with_message_properties()
+        {
+            // Initialize the appender using the ExchangeProperties and MessageProperties...
+            ConfigureRepositoryWithLayoutWithMessageProperties(new PatternLayout("[%thread] %message %newline"));
+
+
+            // setup
+            var gotIt = new ManualResetEventSlim(false);
+            BasicDeliverEventArgs result = null;
+            GetMessage(gotIt, r => result = r);
+
+            // test
+            byte priority = 5;
+            string routingKey = Guid.NewGuid().ToString();
+            ThreadContext.Properties["priority"] = priority.ToString();
+            ThreadContext.Properties["topic"] = routingKey;
+            _Log.Info("hello world");
+
+            // wait for message
+            _TestLog.Debug("waiting for message on test thread");
+            gotIt.Wait();
+
+            // compare the message with the configuration
+            result.BasicProperties.AppId.Should().Be(_Appender.MessageProperties.AppId);
+            result.Exchange.Should().Be(_Appender.ExchangeProperties.Name);
+            result.RoutingKey.Should().Be(routingKey);
+            result.BasicProperties.Priority.Should().Be(priority);
+
+            var message = Encoding.UTF8.GetString(result.Body);
+            message.Satisfy(x => System.Text.RegularExpressions.Regex.IsMatch(x, @"\[\d*|TestRunnerThread\]\ .*$")
+                && x.Contains(""));
+
         }
 
         private void GetMessage(ManualResetEventSlim gotIt, Action<BasicDeliverEventArgs> delivered)

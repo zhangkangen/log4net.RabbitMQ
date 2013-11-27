@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Text;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Framing.v0_9_1;
 using log4net.Appender;
 using log4net.Core;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Framing.v0_9_1;
 
 namespace log4net.RabbitMQ
 {
@@ -14,8 +15,10 @@ namespace log4net.RabbitMQ
 	/// </summary>
 	public class RabbitMQAppender : AppenderSkeleton
 	{
-		private string _Exchange = "app-logging";
-		private IConnection _Connection;
+        private ExchangeProperties _ExchangeProperties = new ExchangeProperties();
+        private MessageProperties _MessageProperties = new MessageProperties();
+
+        private IConnection _Connection;
 		private IModel _Model;
 		private readonly Encoding _Encoding = Encoding.UTF8;
 		private readonly DateTime _Epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
@@ -80,6 +83,8 @@ namespace log4net.RabbitMQ
 		/// 	to send messages. Defaults to {0}, which in the end is 'error' for log.Error("..."), and
 		/// 	so on. An example could be setting this property to 'ApplicationType.MyApp.Web.{0}'.
 		///		The default is '{0}'.
+        ///		
+        ///     Superceeded by ExchangeProperties.Topic which is a bit more flexible.
 		/// </summary>
 		public string Topic
 		{
@@ -144,26 +149,51 @@ namespace log4net.RabbitMQ
 		/// </remarks>
 		public string Exchange
 		{
-			get { return _Exchange; }
-			set { if (value != null) _Exchange = value; }
+            get { return this.ExchangeProperties.Name; }
+			set { if (value != null) this.ExchangeProperties.Name = value; }
 		}
 
-		private string _AppId;
-		/// <summary>
-		/// Gets or sets the application id to specify when sending. Defaults to null,
-		/// and then IBasicProperties.AppId will be the name of the logger instead.
-		/// </summary>
 		public string AppId
 		{
-			get { return _AppId; }
-			set { _AppId = value; }
-		}
+            get { return this._MessageProperties.AppId; }
+            set { this._MessageProperties.AppId = value; }
+        }
 
 		/// <summary>
 		/// Gets or sets whether the logger should log extended data.
 		/// Defaults to false.
 		/// </summary>
 		public bool ExtendedData { get; set; }
+
+        /// <summary>
+        /// 	Gets or sets message properties used when messages are published.
+        /// </summary>
+        public ExchangeProperties ExchangeProperties
+        {
+            get
+            {
+                return this._ExchangeProperties;
+            }
+            set
+            {
+                this._ExchangeProperties = value ?? new ExchangeProperties();
+            }
+        }
+
+        /// <summary>
+        /// 	Gets or sets message properties used when messages are published.
+        /// </summary>
+        public MessageProperties MessageProperties
+        {
+            get
+            {
+                return this._MessageProperties;
+            }
+            set
+            {
+                this._MessageProperties = value ?? new MessageProperties();
+            }
+        }
 
 		#endregion
 
@@ -182,39 +212,56 @@ namespace log4net.RabbitMQ
 			if (_Model == null)
 				return;
 
-			var basicProperties = GetBasicProperties(loggingEvent);
-			var message = GetMessage(loggingEvent);
+			IBasicProperties basicProperties = GetBasicProperties(loggingEvent);
+			byte[] message = GetMessage(loggingEvent);
+            string topic = GetTopic(loggingEvent);
 
-			_Model.BasicPublish(_Exchange,
-			                    string.Format(_Topic, loggingEvent.Level.Name),
-			                    true, false, basicProperties,
-			                    message);
+            _Model.BasicPublish(this._ExchangeProperties.Name, topic,
+                    true, false, basicProperties,
+                    message);
+
 		}
 
-		private IBasicProperties GetBasicProperties(LoggingEvent loggingEvent)
-		{
-			var basicProperties = _Model.CreateBasicProperties();
-			basicProperties.ContentEncoding = "utf8";
-			basicProperties.ContentType = "text/plain";
-			basicProperties.AppId = AppId ?? loggingEvent.LoggerName;
+        private IBasicProperties GetBasicProperties(LoggingEvent loggingEvent)
+        {
+            var basicProperties = _Model.CreateBasicProperties();
+            basicProperties.ContentEncoding = "utf8";  // because this is our _Encoding type
+            basicProperties.ContentType = this.MessageProperties.ContentType.Format(loggingEvent);
+            basicProperties.AppId = this.MessageProperties.AppId ?? loggingEvent.LoggerName;
 
-			basicProperties.Timestamp = new AmqpTimestamp(
-				Convert.ToInt64((loggingEvent.TimeStamp - _Epoch).TotalSeconds));
+            basicProperties.SetPersistent(this._MessageProperties.Persistent);
+            this.InitMessagePriority(basicProperties, loggingEvent);
 
-			// support Validated User-ID (see http://www.rabbitmq.com/extensions.html)
-			basicProperties.UserId = UserName;
+            basicProperties.Timestamp = new AmqpTimestamp(
+                Convert.ToInt64((loggingEvent.TimeStamp - _Epoch).TotalSeconds));
 
-			if (ExtendedData)
-			{
-				basicProperties.Headers["ClassName"] = loggingEvent.LocationInformation.ClassName;
-				basicProperties.Headers["FileName"] = loggingEvent.LocationInformation.FileName;
-				basicProperties.Headers["MethodName"] = loggingEvent.LocationInformation.MethodName;
-				basicProperties.Headers["LineNumber"] = loggingEvent.LocationInformation.LineNumber;
-			}
+            // support Validated User-ID (see http://www.rabbitmq.com/extensions.html)
+            basicProperties.UserId = UserName;
 
-			return basicProperties;
-		}
+            if (this.MessageProperties.ExtendedData)
+            {
+                basicProperties.Headers = new Dictionary<string, object>();
+                basicProperties.Headers["ClassName"] = loggingEvent.LocationInformation.ClassName;
+                basicProperties.Headers["FileName"] = loggingEvent.LocationInformation.FileName;
+                basicProperties.Headers["MethodName"] = loggingEvent.LocationInformation.MethodName;
+                basicProperties.Headers["LineNumber"] = loggingEvent.LocationInformation.LineNumber;
+            }
 
+            return basicProperties;
+        }
+        private void InitMessagePriority(IBasicProperties basicProperties, LoggingEvent loggingEvent)
+        {
+            // the priority must resolve to 0 - 9. Otherwise stick with the default.
+            string sPriority = this.MessageProperties.Priority.Format(loggingEvent);
+            int priority = -1;
+            if (Int32.TryParse(sPriority, out priority))
+            {
+                if ((priority >= 0) && (priority <= 9))
+                {
+                    basicProperties.Priority = (byte)priority;
+                }
+            }
+        }
 
 		private byte[] GetMessage(LoggingEvent loggingEvent)
 		{
@@ -229,6 +276,22 @@ namespace log4net.RabbitMQ
 				return _Encoding.GetBytes(sr.ToString());
 			}
 		}
+        private string GetTopic(LoggingEvent loggingEvent)
+        {
+            // format the topic, use the TopicLayout if it's set....
+            string topic = null;
+            if (this.MessageProperties.Topic != null)
+            {
+                topic = this.MessageProperties.Topic.Format(loggingEvent);
+            }
+            // ...and default back to the Topic format if TopicLayout is not set.
+            if (String.IsNullOrEmpty(topic))
+            {
+                topic = String.Format(_Topic, loggingEvent.Level.Name);
+            }
+
+            return topic;
+        }
 
 		#region StartUp and ShutDown
 
@@ -258,7 +321,13 @@ namespace log4net.RabbitMQ
 
             if (_Model != null)
             {
-                _Model.ExchangeDeclare(_Exchange, ExchangeType.Topic);
+                _Model.ExchangeDeclare(this.ExchangeProperties.Name, this.ExchangeProperties.ExchangeType, this.ExchangeProperties.Durable);
+
+                foreach (ExchangeBinding exchangeBinding in this.ExchangeProperties.Bindings)
+                {
+                    _Model.ExchangeBind(exchangeBinding.Destination, this.ExchangeProperties.Name, exchangeBinding.Topic);
+                }
+
                 _Model.ModelShutdown += OnModelShutdown;
                 this.Debug("apqp connection opened");
             }
