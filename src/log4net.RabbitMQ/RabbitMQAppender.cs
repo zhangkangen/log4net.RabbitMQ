@@ -259,9 +259,11 @@ namespace log4net.RabbitMQ
             if (_Model != null)
             {
                 _Model.ExchangeDeclare(_Exchange, ExchangeType.Topic);
+                _Model.ModelShutdown += OnModelShutdown;
                 this.Debug("apqp connection opened");
             }
 		}
+
 
 		private ConnectionFactory GetConnectionFac()
 		{
@@ -284,7 +286,14 @@ namespace log4net.RabbitMQ
 			             new ShutdownEventArgs(ShutdownInitiator.Application, Constants.ReplySuccess, "closing appender"));
 		}
 
-		private void ShutdownAmqp(IConnection connection, ShutdownEventArgs reason)
+        private void OnModelShutdown(IModel model, ShutdownEventArgs reason)
+        {
+            if (Object.ReferenceEquals(this._Model, model))
+            {
+                this.ShutdownAmqp(this._Connection, reason);
+            }
+        }
+        private void ShutdownAmqp(IConnection connection, ShutdownEventArgs reason)
 		{
             if (Object.ReferenceEquals(this._Connection, connection))
             {
@@ -323,6 +332,7 @@ namespace log4net.RabbitMQ
 
                 if (model != null)
                 {
+                    model.ModelShutdown -= this.OnModelShutdown;
                     this.Debug("closing amqp model. {0}.", reason);
                     model.Close(Constants.ReplySuccess, "closing rabbitmq appender, shutting down logging");
                     model.Dispose();
