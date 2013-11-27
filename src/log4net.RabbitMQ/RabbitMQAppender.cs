@@ -256,8 +256,11 @@ namespace log4net.RabbitMQ
 				ErrorHandler.Error("could not connect to Rabbit instance", e);
 			}
 
-			if (_Model != null)
-				_Model.ExchangeDeclare(_Exchange, ExchangeType.Topic);
+            if (_Model != null)
+            {
+                _Model.ExchangeDeclare(_Exchange, ExchangeType.Topic);
+                this.Debug("apqp connection opened");
+            }
 		}
 
 		private ConnectionFactory GetConnectionFac()
@@ -283,29 +286,61 @@ namespace log4net.RabbitMQ
 
 		private void ShutdownAmqp(IConnection connection, ShutdownEventArgs reason)
 		{
-			try
-			{
-				if (connection != null)
-				{
-					connection.ConnectionShutdown -= ShutdownAmqp;
-					connection.AutoClose = true;
-				}
+            if (Object.ReferenceEquals(this._Connection, connection))
+            {
+                // If this method is called through _Connection.ConnectionShutdown, calling Model.Close() 
+                // may deadlock. I believe what is happening is the Close() call is waiting for the 
+                // close process to complete, but the close process is in the middle of the shutdown event 
+                // and is waiting for this method to return (which is waiting for the close process to
+                // complete...) So...
+                //
+                // Here we are just going to set our references to the model and connection to null,
+                // and then clean up the old model and connection asynchronously. That allows this method
+                // to return quickly, which lets the close process complete.  
 
-				if (_Model != null)
-				{
-					_Model.Close(Constants.ReplySuccess, "closing rabbitmq appender, shutting down logging");
-					_Model.Dispose();
-				}
-			}
-			catch (Exception e)
-			{
-				ErrorHandler.Error("could not close model", e);
-			}
+                this.BeginShutdownAmqp(this._Connection, this._Model, reason);
 
-			_Connection = null;
-			_Model = null;
+                this._Connection = null;
+                this._Model = null;
+            }
 		}
 
+        private delegate void ShutdownAmqpCallback(IConnection connection, IModel model, ShutdownEventArgs reason);
+        private void BeginShutdownAmqp(IConnection connection, IModel model, ShutdownEventArgs reason)
+        {
+            ShutdownAmqpCallback shutdownCallback = this.ShutdownAmqp;
+            shutdownCallback.BeginInvoke(connection, model, reason, null, null);
+        }
+        private void ShutdownAmqp(IConnection connection, IModel model, ShutdownEventArgs reason)
+        {
+            try
+            {
+                if (connection != null)
+                {
+                    connection.ConnectionShutdown -= ShutdownAmqp;
+                    connection.AutoClose = true;
+                }
+
+                if (model != null)
+                {
+                    this.Debug("closing amqp model. {0}.", reason);
+                    model.Close(Constants.ReplySuccess, "closing rabbitmq appender, shutting down logging");
+                    model.Dispose();
+
+                    this.Debug("amqp model closed.");
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorHandler.Error("could not close model", e);
+            }
+        }
+
 		#endregion
+
+        private void Debug(string format, params object[] args)
+        {
+            log4net.Util.LogLog.Debug(typeof(RabbitMQAppender), String.Format(format, args));
+        }
 	}
 }
