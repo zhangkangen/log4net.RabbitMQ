@@ -163,7 +163,17 @@ namespace log4net.RabbitMQ
 		/// Gets or sets whether the logger should log extended data.
 		/// Defaults to false.
 		/// </summary>
-		public bool ExtendedData { get; set; }
+        public bool ExtendedData
+        {
+            get
+            {
+                return this.MessageProperties.ExtendedData;
+            }
+            set
+            {
+                this.MessageProperties.ExtendedData = value;
+            }
+        }
 
         /// <summary>
         /// 	Gets or sets message properties used when messages are published.
