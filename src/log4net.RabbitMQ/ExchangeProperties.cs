@@ -25,7 +25,7 @@ namespace log4net.RabbitMQ
         /// <remarks>
         /// 	Default is 'topic'
         /// </remarks>
-        public string ExchangeType {get; set;}
+        public string ExchangeType { get; set; }
 
         /// <summary>
         /// 	Gets or sets the exchange durability.
@@ -54,7 +54,6 @@ namespace log4net.RabbitMQ
         {
             this.Bindings.Add(exchangeBinding);
         }
-
     }
 }
 

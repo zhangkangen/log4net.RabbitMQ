@@ -48,7 +48,7 @@ namespace log4net.RabbitMQ
         {
             this.Topic = new PatternLayout(String.Empty);   // when empty the original "Topic" will be used.
             this.ContentType = new PatternLayout("text/plain");
-            this.Persistent = false; 
+            this.Persistent = false;
             this.Priority = new PatternLayout(String.Empty);  // use default
         }
     }

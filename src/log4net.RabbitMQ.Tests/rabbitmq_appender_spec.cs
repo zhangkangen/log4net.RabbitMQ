@@ -69,7 +69,7 @@ namespace log4net.RabbitMQ.Tests
             ThreadContext.Properties["priority"] = "0";
             ThreadContext.Properties["topic"] = "log4net.RabbitMQ.Tests";
 
-            _Appender.HostName = this.hostName ;
+            _Appender.HostName = this.hostName;
 
             _Appender.ActivateOptions();
 
