@@ -1,290 +1,369 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Text;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Framing.v0_9_1;
 using log4net.Appender;
 using log4net.Core;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Framing.v0_9_1;
 
 namespace log4net.RabbitMQ
 {
-	/// <summary>
-	/// An appender for log4net that publishes to RabbitMQ.
-	/// </summary>
-	public class RabbitMQAppender : AppenderSkeleton
-	{
-		private string _Exchange = "app-logging";
-		private IConnection _Connection;
-		private IModel _Model;
-		private readonly Encoding _Encoding = Encoding.UTF8;
-		private readonly DateTime _Epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+    /// <summary>
+    /// An appender for log4net that publishes to RabbitMQ.
+    /// </summary>
+    public class RabbitMQAppender : AppenderSkeleton
+    {
+        private ExchangeProperties _ExchangeProperties = new ExchangeProperties();
+        private MessageProperties _MessageProperties = new MessageProperties();
 
-		#region Properties
+        private IConnection _Connection;
+        private IModel _Model;
+        private readonly Encoding _Encoding = Encoding.UTF8;
+        private readonly DateTime _Epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 
-		private string _VHost = "/";
+        #region Properties
 
-		/// <summary>
-		/// Gets or sets the virtual host to publish to.
-		/// </summary>
-		public string VHost
-		{
-			get { return _VHost; }
-			set { if (value != null) _VHost = value; }
-		}
+        private string _VHost = "/";
 
-		private string _UserName = "guest";
+        /// <summary>
+        /// Gets or sets the virtual host to publish to.
+        /// </summary>
+        public string VHost
+        {
+            get { return _VHost; }
+            set { if (value != null) _VHost = value; }
+        }
 
-		/// <summary>
-		/// Gets or sets the username to use for
-		/// authentication with the message broker. The default
-		/// is 'guest'
-		/// </summary>
-		public string UserName
-		{
-			get { return _UserName; }
-			set { _UserName = value; }
-		}
+        private string _UserName = "guest";
 
-		private string _Password = "guest";
+        /// <summary>
+        /// Gets or sets the username to use for
+        /// authentication with the message broker. The default
+        /// is 'guest'
+        /// </summary>
+        public string UserName
+        {
+            get { return _UserName; }
+            set { _UserName = value; }
+        }
 
-		/// <summary>
-		/// Gets or sets the password to use for
-		/// authentication with the message broker.
-		/// The default is 'guest'
-		/// </summary>
-		public string Password
-		{
-			get { return _Password; }
-			set { _Password = value; }
-		}
+        private string _Password = "guest";
 
-		private uint _Port = 5672;
+        /// <summary>
+        /// Gets or sets the password to use for
+        /// authentication with the message broker.
+        /// The default is 'guest'
+        /// </summary>
+        public string Password
+        {
+            get { return _Password; }
+            set { _Password = value; }
+        }
 
-		/// <summary>
-		/// Gets or sets the port to use
-		/// for connections to the message broker (this is the broker's
-		/// listening port).
-		/// The default is '5672'.
-		/// </summary>
-		public uint Port
-		{
-			get { return _Port; }
-			set { _Port = value; }
-		}
+        private uint _Port = 5672;
 
-		private string _Topic = "{0}";
+        /// <summary>
+        /// Gets or sets the port to use
+        /// for connections to the message broker (this is the broker's
+        /// listening port).
+        /// The default is '5672'.
+        /// </summary>
+        public uint Port
+        {
+            get { return _Port; }
+            set { _Port = value; }
+        }
 
-		/// <summary>
-		/// 	Gets or sets the routing key (aka. topic) with which
-		/// 	to send messages. Defaults to {0}, which in the end is 'error' for log.Error("..."), and
-		/// 	so on. An example could be setting this property to 'ApplicationType.MyApp.Web.{0}'.
-		///		The default is '{0}'.
-		/// </summary>
-		public string Topic
-		{
-			get { return _Topic; }
-			set { _Topic = value; }
-		}
+        private string _Topic = "{0}";
 
-		private IProtocol _Protocol = Protocols.DefaultProtocol;
+        /// <summary>
+        /// 	Gets or sets the routing key (aka. topic) with which
+        /// 	to send messages. Defaults to {0}, which in the end is 'error' for log.Error("..."), and
+        /// 	so on. An example could be setting this property to 'ApplicationType.MyApp.Web.{0}'.
+        ///		The default is '{0}'.
+        ///		
+        ///     Superceeded by ExchangeProperties.Topic which is a bit more flexible.
+        /// </summary>
+        public string Topic
+        {
+            get { return _Topic; }
+            set { _Topic = value; }
+        }
 
-		/// <summary>
-		/// Gets or sets the AMQP protocol (version) to use
-		/// for communications with the RabbitMQ broker. The default 
-		/// is the RabbitMQ.Client-library's default protocol.
-		/// </summary>
-		public IProtocol Protocol
-		{
-			get { return _Protocol; }
-			set { if (value != null) _Protocol = value; }
-		}
+        private IProtocol _Protocol = Protocols.DefaultProtocol;
 
-		/// <summary>
-		/// 	Sets the protocol from a string.
-		/// 	Uses <see cref = "Protocols.Lookup" /> internally. It is
-		///		safe to pass both null and invalid protocols to this method (but
-		///		don't expect those invalid protocols to be used ;))
-		/// </summary>
-		/// <param name = "protocol"></param>
-		public void SetProtocol(string protocol)
-		{
-			try
-			{
-				var safeLookup = Protocols.SafeLookup(protocol);
+        /// <summary>
+        /// Gets or sets the AMQP protocol (version) to use
+        /// for communications with the RabbitMQ broker. The default 
+        /// is the RabbitMQ.Client-library's default protocol.
+        /// </summary>
+        public IProtocol Protocol
+        {
+            get { return _Protocol; }
+            set { if (value != null) _Protocol = value; }
+        }
 
-				if (safeLookup != null)
-					Protocol = safeLookup;
-			}
-			catch (ConfigurationException e)
-			{
-				ErrorHandler.Error(string.Format("could not find protocol named '{0}'", protocol), e);
-			}
-		}
+        /// <summary>
+        /// 	Sets the protocol from a string.
+        /// 	Uses <see cref = "Protocols.Lookup" /> internally. It is
+        ///		safe to pass both null and invalid protocols to this method (but
+        ///		don't expect those invalid protocols to be used ;))
+        /// </summary>
+        /// <param name = "protocol"></param>
+        public void SetProtocol(string protocol)
+        {
+            try
+            {
+                var safeLookup = Protocols.SafeLookup(protocol);
 
-		private string _HostName = "localhost";
+                if (safeLookup != null)
+                    Protocol = safeLookup;
+            }
+            catch (ConfigurationException e)
+            {
+                ErrorHandler.Error(string.Format("could not find protocol named '{0}'", protocol), e);
+            }
+        }
 
-		/// <summary>
-		/// 	Gets or sets the host name of the broker to log to.
-		/// </summary>
-		/// <remarks>
-		/// 	Default is 'localhost'
-		/// </remarks>
-		public string HostName
-		{
-			get { return _HostName; }
-			set { if (value != null) _HostName = value; }
-		}
+        private string _HostName = "localhost";
 
-		/// <summary>
-		/// 	Gets or sets the exchange to bind the logger output to.
-		/// </summary>
-		/// <remarks>
-		/// 	Default is 'app-logging'
-		/// </remarks>
-		public string Exchange
-		{
-			get { return _Exchange; }
-			set { if (value != null) _Exchange = value; }
-		}
+        /// <summary>
+        /// 	Gets or sets the host name of the broker to log to.
+        /// </summary>
+        /// <remarks>
+        /// 	Default is 'localhost'
+        /// </remarks>
+        public string HostName
+        {
+            get { return _HostName; }
+            set { if (value != null) _HostName = value; }
+        }
 
-		private string _AppId;
-		/// <summary>
-		/// Gets or sets the application id to specify when sending. Defaults to null,
-		/// and then IBasicProperties.AppId will be the name of the logger instead.
-		/// </summary>
-		public string AppId
-		{
-			get { return _AppId; }
-			set { _AppId = value; }
-		}
+        /// <summary>
+        /// 	Gets or sets the exchange to bind the logger output to.
+        /// </summary>
+        /// <remarks>
+        /// 	Default is 'app-logging'
+        /// </remarks>
+        public string Exchange
+        {
+            get { return this.ExchangeProperties.Name; }
+            set { if (value != null) this.ExchangeProperties.Name = value; }
+        }
 
-		/// <summary>
-		/// Gets or sets whether the logger should log extended data.
-		/// Defaults to false.
-		/// </summary>
-		public bool ExtendedData { get; set; }
+        public string AppId
+        {
+            get { return this._MessageProperties.AppId; }
+            set { this._MessageProperties.AppId = value; }
+        }
 
-		#endregion
+        /// <summary>
+        /// Gets or sets whether the logger should log extended data.
+        /// Defaults to false.
+        /// </summary>
+        public bool ExtendedData
+        {
+            get
+            {
+                return this.MessageProperties.ExtendedData;
+            }
+            set
+            {
+                this.MessageProperties.ExtendedData = value;
+            }
+        }
 
-		protected override void Append(LoggingEvent loggingEvent)
-		{
-			try
-			{
-				if (_Model == null)
-					StartConnection();
-			}
-			catch (Exception e)
-			{
-				ErrorHandler.Error("Could not start connection", e);
-			}
+        /// <summary>
+        /// 	Gets or sets message properties used when messages are published.
+        /// </summary>
+        public ExchangeProperties ExchangeProperties
+        {
+            get
+            {
+                return this._ExchangeProperties;
+            }
+            set
+            {
+                this._ExchangeProperties = value ?? new ExchangeProperties();
+            }
+        }
 
-			if (_Model == null)
-				return;
+        /// <summary>
+        /// 	Gets or sets message properties used when messages are published.
+        /// </summary>
+        public MessageProperties MessageProperties
+        {
+            get
+            {
+                return this._MessageProperties;
+            }
+            set
+            {
+                this._MessageProperties = value ?? new MessageProperties();
+            }
+        }
 
-			var basicProperties = GetBasicProperties(loggingEvent);
-			var message = GetMessage(loggingEvent);
+        #endregion
 
-			_Model.BasicPublish(_Exchange,
-			                    string.Format(_Topic, loggingEvent.Level.Name),
-			                    true, false, basicProperties,
-			                    message);
-		}
+        protected override void Append(LoggingEvent loggingEvent)
+        {
+            try
+            {
+                if (_Model == null)
+                    StartConnection();
+            }
+            catch (Exception e)
+            {
+                ErrorHandler.Error("Could not start connection", e);
+            }
 
-		private IBasicProperties GetBasicProperties(LoggingEvent loggingEvent)
-		{
-			var basicProperties = _Model.CreateBasicProperties();
-			basicProperties.ContentEncoding = "utf8";
-			basicProperties.ContentType = "text/plain";
-			basicProperties.AppId = AppId ?? loggingEvent.LoggerName;
+            if (_Model == null)
+                return;
 
-			basicProperties.Timestamp = new AmqpTimestamp(
-				Convert.ToInt64((loggingEvent.TimeStamp - _Epoch).TotalSeconds));
+            IBasicProperties basicProperties = GetBasicProperties(loggingEvent);
+            byte[] message = GetMessage(loggingEvent);
+            string topic = GetTopic(loggingEvent);
 
-			// support Validated User-ID (see http://www.rabbitmq.com/extensions.html)
-			basicProperties.UserId = UserName;
+            _Model.BasicPublish(this._ExchangeProperties.Name, topic,
+                    true, false, basicProperties,
+                    message);
 
-			if (ExtendedData)
-			{
-				basicProperties.Headers["ClassName"] = loggingEvent.LocationInformation.ClassName;
-				basicProperties.Headers["FileName"] = loggingEvent.LocationInformation.FileName;
-				basicProperties.Headers["MethodName"] = loggingEvent.LocationInformation.MethodName;
-				basicProperties.Headers["LineNumber"] = loggingEvent.LocationInformation.LineNumber;
-			}
+        }
 
-			return basicProperties;
-		}
+        private IBasicProperties GetBasicProperties(LoggingEvent loggingEvent)
+        {
+            var basicProperties = _Model.CreateBasicProperties();
+            basicProperties.ContentEncoding = "utf8";  // because this is our _Encoding type
+            basicProperties.ContentType = this.MessageProperties.ContentType.Format(loggingEvent);
+            basicProperties.AppId = this.MessageProperties.AppId ?? loggingEvent.LoggerName;
 
+            basicProperties.SetPersistent(this._MessageProperties.Persistent);
+            this.InitMessagePriority(basicProperties, loggingEvent);
 
-		private byte[] GetMessage(LoggingEvent loggingEvent)
-		{
-			var sb = new StringBuilder();
-			using (var sr = new StringWriter(sb))
-			{
-				Layout.Format(sr, loggingEvent);
+            basicProperties.Timestamp = new AmqpTimestamp(
+                Convert.ToInt64((loggingEvent.TimeStamp - _Epoch).TotalSeconds));
 
-				if (loggingEvent.ExceptionObject != null)
-					sr.Write(loggingEvent.GetExceptionString());
+            // support Validated User-ID (see http://www.rabbitmq.com/extensions.html)
+            basicProperties.UserId = UserName;
 
-				return _Encoding.GetBytes(sr.ToString());
-			}
-		}
+            if (this.MessageProperties.ExtendedData)
+            {
+                basicProperties.Headers = new Dictionary<string, object>();
+                basicProperties.Headers["ClassName"] = loggingEvent.LocationInformation.ClassName;
+                basicProperties.Headers["FileName"] = loggingEvent.LocationInformation.FileName;
+                basicProperties.Headers["MethodName"] = loggingEvent.LocationInformation.MethodName;
+                basicProperties.Headers["LineNumber"] = loggingEvent.LocationInformation.LineNumber;
+            }
 
-		#region StartUp and ShutDown
+            return basicProperties;
+        }
+        private void InitMessagePriority(IBasicProperties basicProperties, LoggingEvent loggingEvent)
+        {
+            // the priority must resolve to 0 - 9. Otherwise stick with the default.
+            string sPriority = this.MessageProperties.Priority.Format(loggingEvent);
+            int priority = -1;
+            if (Int32.TryParse(sPriority, out priority))
+            {
+                if ((priority >= 0) && (priority <= 9))
+                {
+                    basicProperties.Priority = (byte)priority;
+                }
+            }
+        }
 
-		public override void ActivateOptions()
-		{
-			base.ActivateOptions();
-			StartConnection();
-		}
+        private byte[] GetMessage(LoggingEvent loggingEvent)
+        {
+            var sb = new StringBuilder();
+            using (var sr = new StringWriter(sb))
+            {
+                Layout.Format(sr, loggingEvent);
 
-		private void StartConnection()
-		{
-			try
-			{
-				_Connection = GetConnectionFac().CreateConnection();
-				_Connection.ConnectionShutdown += ShutdownAmqp;
+                if (loggingEvent.ExceptionObject != null)
+                    sr.Write(loggingEvent.GetExceptionString());
 
-				try { _Model = _Connection.CreateModel(); }
-				catch (Exception e)
-				{
-					ErrorHandler.Error("could not create model", e);
-				}
-			}
-			catch (Exception e)
-			{
-				ErrorHandler.Error("could not connect to Rabbit instance", e);
-			}
+                return _Encoding.GetBytes(sr.ToString());
+            }
+        }
+        private string GetTopic(LoggingEvent loggingEvent)
+        {
+            // format the topic, use the TopicLayout if it's set....
+            string topic = null;
+            if (this.MessageProperties.Topic != null)
+            {
+                topic = this.MessageProperties.Topic.Format(loggingEvent);
+            }
+            // ...and default back to the Topic format if TopicLayout is not set.
+            if (String.IsNullOrEmpty(topic))
+            {
+                topic = String.Format(_Topic, loggingEvent.Level.Name);
+            }
+
+            return topic;
+        }
+
+        #region StartUp and ShutDown
+
+        public override void ActivateOptions()
+        {
+            base.ActivateOptions();
+            StartConnection();
+        }
+
+        private void StartConnection()
+        {
+            try
+            {
+                _Connection = GetConnectionFac().CreateConnection();
+                _Connection.ConnectionShutdown += ShutdownAmqp;
+
+                try { _Model = _Connection.CreateModel(); }
+                catch (Exception e)
+                {
+                    ErrorHandler.Error("could not create model", e);
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorHandler.Error("could not connect to Rabbit instance", e);
+            }
 
             if (_Model != null)
             {
-                _Model.ExchangeDeclare(_Exchange, ExchangeType.Topic);
+                _Model.ExchangeDeclare(this.ExchangeProperties.Name, this.ExchangeProperties.ExchangeType, this.ExchangeProperties.Durable);
+
+                foreach (ExchangeBinding exchangeBinding in this.ExchangeProperties.Bindings)
+                {
+                    _Model.ExchangeBind(exchangeBinding.Destination, this.ExchangeProperties.Name, exchangeBinding.Topic);
+                }
+
                 _Model.ModelShutdown += OnModelShutdown;
                 this.Debug("apqp connection opened");
             }
-		}
+        }
 
 
-		private ConnectionFactory GetConnectionFac()
-		{
-			return new ConnectionFactory
-			{
-				HostName = HostName,
-				VirtualHost = VHost,
-				UserName = UserName,
-				Password = Password,
-				RequestedHeartbeat = 60,
-				Port = (int)Port
-			};
-		}
+        private ConnectionFactory GetConnectionFac()
+        {
+            return new ConnectionFactory
+            {
+                HostName = HostName,
+                VirtualHost = VHost,
+                UserName = UserName,
+                Password = Password,
+                RequestedHeartbeat = 60,
+                Port = (int)Port
+            };
+        }
 
-		protected override void OnClose()
-		{
-			base.OnClose();
+        protected override void OnClose()
+        {
+            base.OnClose();
 
-			ShutdownAmqp(_Connection,
-			             new ShutdownEventArgs(ShutdownInitiator.Application, Constants.ReplySuccess, "closing appender"));
-		}
+            ShutdownAmqp(_Connection,
+                         new ShutdownEventArgs(ShutdownInitiator.Application, Constants.ReplySuccess, "closing appender"));
+        }
 
         private void OnModelShutdown(IModel model, ShutdownEventArgs reason)
         {
@@ -294,7 +373,7 @@ namespace log4net.RabbitMQ
             }
         }
         private void ShutdownAmqp(IConnection connection, ShutdownEventArgs reason)
-		{
+        {
             if (Object.ReferenceEquals(this._Connection, connection))
             {
                 // If this method is called through _Connection.ConnectionShutdown, calling Model.Close() 
@@ -312,7 +391,7 @@ namespace log4net.RabbitMQ
                 this._Connection = null;
                 this._Model = null;
             }
-		}
+        }
 
         private delegate void ShutdownAmqpCallback(IConnection connection, IModel model, ShutdownEventArgs reason);
         private void BeginShutdownAmqp(IConnection connection, IModel model, ShutdownEventArgs reason)
@@ -346,11 +425,11 @@ namespace log4net.RabbitMQ
             }
         }
 
-		#endregion
+        #endregion
 
         private void Debug(string format, params object[] args)
         {
             log4net.Util.LogLog.Debug(typeof(RabbitMQAppender), String.Format(format, args));
         }
-	}
+    }
 }
