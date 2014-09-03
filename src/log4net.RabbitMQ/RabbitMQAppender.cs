@@ -352,9 +352,17 @@ namespace log4net.RabbitMQ
                 VirtualHost = VHost,
                 UserName = UserName,
                 Password = Password,
+                Ssl = Ssl,
                 RequestedHeartbeat = 60,
                 Port = (int)Port
             };
+        }
+
+        private SslOption _Ssl = new SslOption();
+
+        protected SslOption Ssl {
+            get { return _Ssl; }
+            set { _Ssl = value; }
         }
 
         protected override void OnClose()
