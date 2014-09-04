@@ -280,7 +280,7 @@ namespace log4net.RabbitMQ
             {
                 Layout.Format(sr, loggingEvent);
 
-                if (loggingEvent.ExceptionObject != null)
+                if (Layout.IgnoresException && loggingEvent.ExceptionObject != null)
                     sr.Write(loggingEvent.GetExceptionString());
 
                 return _Encoding.GetBytes(sr.ToString());
