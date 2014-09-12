@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>log4net.RabbitMQAppender</id>
+    <version>$version$</version>
+    <authors>Henrik Feldt</authors>
+    <owners>Henrik Feldt</owners>
+    <projectUrl>https://github.com/haf/log4net.RabbitMQ</projectUrl>
+    <description>Log4net appender for RabbitMQ</description>
+    <copyright>Henrik Feldt 2011</copyright>
+    <tags>rabbitmq log4net</tags>
+  </metadata>
+</package>
