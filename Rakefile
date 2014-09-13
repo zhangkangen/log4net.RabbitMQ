@@ -35,7 +35,12 @@ end
 
 desc 'publish nugets'
 task :nuget_publish => [:create_nugets] do |nuget|
-    sh "src/.nuget/NuGet.exe push #{ENV["NugetOrgApiKey"]} log4net.RabbitMQAppender.#{ENV['NUGET_VERSION']}.nupkg"
+	raise "No NugetOrgApiKey environment variable set!" unless (not ENV['NugetOrgApiKey'].nil?) and (not ENV['NugetOrgApiKey'].empty?)
+	cmd = "src/.nuget/NuGet.exe push #{ENV["NugetOrgApiKey"]} log4net.RabbitMQAppender.#{ENV['NUGET_VERSION']}.nupkg"
+	unless ::Rake::Win32.windows?
+		cmd = "mono " + cmd
+	end
+    sh cmd
 end
 
 desc 'runs create_nugets'
