@@ -9,6 +9,7 @@ desc 'restore all nuget pkgs'
 nugets_restore :restore do |r|
   r.out = 'src/packages'
   r.exe = 'src/.nuget/NuGet.exe'
+  r.list_spec = 'src/**/packages.config' # don't include anything in Ruby vendor folders!
 end
 
 'build the solution'
