@@ -12,7 +12,7 @@ nugets_restore :restore do |r|
   r.list_spec = 'src/**/packages.config' # don't include anything in Ruby vendor folders!
 end
 
-'build the solution'
+desc 'build the solution'
 build :build => [:versioning, :restore] do |b|
   b.sln = 'src/log4net.RabbitMQ.sln'
 end
@@ -25,6 +25,7 @@ nugets_pack :create_nugets => ['build/pkg', :versioning, :build] do |p|
   p.out     = 'build/pkg'
   p.exe     = 'src/.nuget/NuGet.exe'
   p.with_metadata do |m|
+    m.id = "log4net.RabbitMQAppender"
     m.description = 'Log4net appender for RabbitMQ'
     m.authors = 'Henrik Feldt'
     m.project_url = 'https://github.com/haf/log4net.RabbitMQ'
@@ -35,12 +36,8 @@ end
 
 desc 'publish nugets'
 task :nuget_publish => [:create_nugets] do |nuget|
-	raise "No NugetOrgApiKey environment variable set!" unless (not ENV['NugetOrgApiKey'].nil?) and (not ENV['NugetOrgApiKey'].empty?)
-	cmd = "src/.nuget/NuGet.exe push #{ENV["NugetOrgApiKey"]} log4net.RabbitMQAppender.#{ENV['NUGET_VERSION']}.nupkg"
-	unless ::Rake::Win32.windows?
-		cmd = "mono " + cmd
-	end
-    sh cmd
+  raise "No NugetOrgApiKey environment variable set!" unless ENV['NugetOrgApiKey']
+  system "src/.nuget/NuGet.exe", "push", "build/pkg/log4net.RabbitMQAppender.#{ENV['NUGET_VERSION']}.nupkg", ENV["NugetOrgApiKey"], clr_command: true
 end
 
 desc 'runs create_nugets'
