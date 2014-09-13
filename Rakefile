@@ -17,9 +17,20 @@ build :build => [:versioning, :restore] do |b|
   b.sln = 'src/log4net.RabbitMQ.sln'
 end
 
-desc 'create nugets from the build'
-task :create_nugets => [:versioning, :build] do |p|
-  sh "src/.nuget/NuGet.exe pack src/log4net.RabbitMQ/log4net.RabbitMQ.csproj -Version #{ENV['NUGET_VERSION']}"
+directory 'build/pkg'
+
+nugets_pack :create_nugets => ['build/pkg', :versioning, :build] do |p|
+  p.files   = FileList['src/**/*.csproj'].
+    exclude(/Fracture|Example|Tests|Spec|sample|packages/)
+  p.out     = 'build/pkg'
+  p.exe     = 'src/.nuget/NuGet.exe'
+  p.with_metadata do |m|
+    m.description = 'Log4net appender for RabbitMQ'
+    m.authors = 'Henrik Feldt'
+    m.project_url = 'https://github.com/haf/log4net.RabbitMQ'
+    m.version = ENV['NUGET_VERSION']
+    m.tags = 'rabbitmq log4net'
+  end
 end
 
 desc 'publish nugets'
