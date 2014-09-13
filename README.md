@@ -1,6 +1,6 @@
 # log4net RabbitMQ Appender
 
-*note: I would advice moving to NLog for future applications due to the lack of upgrades to log4net*
+*note: I would recommend looking at [Logary](https://github.com/logary/logary) for a future-proof way of logging - while it doesn't have RabbitMQ support right now, adding it could be done in an hours worth of coding for a newbie, by following the structure of this repo or that of NLog.RabbitMQ.*
 
 **Nuget key: `log4net.RabbitMQAppender`**
 
