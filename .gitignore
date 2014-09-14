@@ -5,3 +5,7 @@ _ReSharper*
 *.resharper
 *.suo
 log4net.RabbitMQAppender.*.nupkg
+src/packages
+.bundle
+vendor
+build
