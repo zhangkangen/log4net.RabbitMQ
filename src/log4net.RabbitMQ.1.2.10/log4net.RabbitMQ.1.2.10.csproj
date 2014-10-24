@@ -8,7 +8,7 @@
     <ProjectGuid>{CC177186-EFF2-4C65-961F-9A9CA2495856}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>log4net.RabbitMQ._1._2._10</RootNamespace>
+    <RootNamespace>log4net.RabbitMQ</RootNamespace>
     <AssemblyName>log4net.RabbitMQ.1.2.10</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -53,10 +53,11 @@
     <Compile Include="..\log4net.RabbitMQ\MessageProperties.cs">
       <Link>MessageProperties.cs</Link>
     </Compile>
-    <Compile Include="..\log4net.RabbitMQ\RabbitMQAppender.cs">
-      <Link>RabbitMQAppender.cs</Link>
+    <Compile Include="..\log4net.RabbitMQ\RabbitMQAppenderBase.cs">
+      <Link>RabbitMQAppenderBase.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RabbitMQAppender.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

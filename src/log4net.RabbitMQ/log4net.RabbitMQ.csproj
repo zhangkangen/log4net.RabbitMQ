@@ -47,6 +47,7 @@
     <Compile Include="ExchangeProperties.cs" />
     <Compile Include="MessageProperties.cs" />
     <Compile Include="RabbitMQAppender.cs" />
+    <Compile Include="RabbitMQAppenderBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
