@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.Web", "sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.Listener", "samples\log4net.RabbitMQ.Listener\log4net.RabbitMQ.Listener.csproj", "{103B0478-1305-4078-B86E-50F67A7E3336}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.1.2.10", "log4net.RabbitMQ.1.2.10\log4net.RabbitMQ.1.2.10.csproj", "{CC177186-EFF2-4C65-961F-9A9CA2495856}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,16 @@ Global
 		{103B0478-1305-4078-B86E-50F67A7E3336}.Release|Mixed Platforms.Build.0 = Release|x86
 		{103B0478-1305-4078-B86E-50F67A7E3336}.Release|x86.ActiveCfg = Release|x86
 		{103B0478-1305-4078-B86E-50F67A7E3336}.Release|x86.Build.0 = Release|x86
+		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
