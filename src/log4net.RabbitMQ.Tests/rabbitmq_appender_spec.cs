@@ -5,12 +5,12 @@ using System.Threading;
 using NUnit.Framework;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using RabbitMQ.Client.Framing;
 using SharpTestsEx;
 using log4net.Appender;
 using log4net.Config;
 using log4net.Layout;
 using log4net.Repository;
-using RabbitMQ.Client.Framing.v0_9_1;
 
 namespace log4net.RabbitMQ.Tests
 {

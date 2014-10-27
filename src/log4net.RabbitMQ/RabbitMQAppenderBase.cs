@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using log4net.Appender;
 using log4net.Core;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Framing.v0_9_1;
+using RabbitMQ.Client.Framing;
 
 namespace log4net.RabbitMQ
 {
@@ -105,6 +106,19 @@ namespace log4net.RabbitMQ
             set { if (value != null) _Protocol = value; }
         }
 
+        // Copied from https://github.com/rabbitmq/rabbitmq-dotnet-client/blob/rabbitmq_v3_3_2/projects/client/RabbitMQ.Client/src/client/api/Protocols.cs
+        // as it's not part of the API anymore
+        private static IProtocol SafeLookup(string name) {
+            PropertyInfo pi = typeof(Protocols).GetProperty(name,
+                                                            BindingFlags.Public |
+                                                            BindingFlags.Static);
+            if (pi == null)
+            {
+                return null;
+            }
+            return pi.GetValue(null, new object[0]) as IProtocol;
+        }
+
         /// <summary>
         /// 	Sets the protocol from a string.
         /// 	Uses <see cref = "Protocols.Lookup" /> internally. It is
@@ -116,7 +130,7 @@ namespace log4net.RabbitMQ
         {
             try
             {
-                var safeLookup = Protocols.SafeLookup(protocol);
+                var safeLookup = SafeLookup(protocol);
 
                 if (safeLookup != null)
                     Protocol = safeLookup;
