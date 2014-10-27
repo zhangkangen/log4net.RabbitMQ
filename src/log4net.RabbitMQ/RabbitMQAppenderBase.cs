@@ -332,7 +332,9 @@ namespace log4net.RabbitMQ
         {
             try
             {
-                _Connection = GetConnectionFac().CreateConnection();
+                var factory = GetConnectionFac();
+                factory.UseBackgroundThreadsForIO = true;
+                _Connection = factory.CreateConnection();
                 _Connection.ConnectionShutdown += ShutdownAmqp;
 
                 try { _Model = _Connection.CreateModel(); }
