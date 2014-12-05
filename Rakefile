@@ -50,9 +50,10 @@ end
 
 desc 'publish nugets'
 task :nuget_publish => [:create_nugets] do |nuget|
-  raise "No NugetOrgApiKey environment variable set!" unless ENV['NugetOrgApiKey']
-  system "src/.nuget/NuGet.exe", "push", "build/pkg/log4net.RabbitMQAppender.#{ENV['NUGET_VERSION']}.nupkg", ENV["NugetOrgApiKey"], clr_command: true
-  system "src/.nuget/NuGet.exe", "push", "build/pkg/log4net.1.2.10.RabbitMQAppender.#{ENV['NUGET_VERSION']}.nupkg", ENV["NugetOrgApiKey"], clr_command: true
+  key = ENV['NugetOrgApiKey'] || ENV['NUGET_KEY']
+  raise "No NugetOrgApiKey environment variable set!" unless key
+  system "src/.nuget/NuGet.exe", "push", "build/pkg/log4net.RabbitMQAppender.#{ENV['NUGET_VERSION']}.nupkg", key, clr_command: true
+  system "src/.nuget/NuGet.exe", "push", "build/pkg/log4net.1.2.10.RabbitMQAppender.#{ENV['NUGET_VERSION']}.nupkg", key, clr_command: true
 end
 
 desc 'runs create_nugets'
