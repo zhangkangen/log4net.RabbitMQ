@@ -310,12 +310,11 @@ namespace log4net.RabbitMQ
             if (this.MessageProperties.Topic != null)
             {
                 var sb = new StringBuilder();
-                var tw = new StringWriter(sb);
-                this.MessageProperties.Topic.Format(tw, loggingEvent);
-
-                tw.Flush();
-                tw.Close();
-                topic = sb.ToString();
+                using (var sw = new StringWriter(sb))
+                {
+                    this.MessageProperties.Topic.Format(sw, loggingEvent);
+                    topic = sw.ToString();
+                }
             }
             // ...and default back to the Topic format if TopicLayout is not set.
             if (String.IsNullOrEmpty(topic))
