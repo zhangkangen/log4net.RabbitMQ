@@ -20,6 +20,8 @@ namespace log4net.RabbitMQ.Tests
         private ILoggerRepository _Rep;
 
         private string hostName = "localhost";
+        private string username = "guest";
+        private string password = "guest";
 
         private ILog _Log;
         private Tuple<IModel, IConnection> _Listener;
@@ -85,8 +87,8 @@ namespace log4net.RabbitMQ.Tests
             {
                 HostName = _Appender.HostName,
                 VirtualHost = "/",
-                UserName = "guest",
-                Password = "guest",
+                UserName = username,
+                Password = password,
                 Protocol = Protocols.DefaultProtocol,
             };
 

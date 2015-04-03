@@ -276,7 +276,18 @@ namespace log4net.RabbitMQ
         private void InitMessagePriority(IBasicProperties basicProperties, LoggingEvent loggingEvent)
         {
             // the priority must resolve to 0 - 9. Otherwise stick with the default.
-            string sPriority = Format(loggingEvent);
+            string sPriority = null;
+
+            if (this.MessageProperties.Priority != null)
+            {
+                var sb = new StringBuilder();
+                using (var sw = new StringWriter(sb))
+                {
+                    this.MessageProperties.Priority.Format(sw, loggingEvent);
+                    sPriority = sw.ToString();
+                }
+            }
+
             int priority = -1;
             if (Int32.TryParse(sPriority, out priority))
             {
