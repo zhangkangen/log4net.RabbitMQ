@@ -11,7 +11,7 @@ namespace log4net.RabbitMQ {
         }
 
         protected override void Debug(string format, params object[] args) {
-            log4net.Util.LogLog.Debug(GetType(), string.Format("type: {0} ", typeof(RabbitMQAppender)) + String.Format(format, args));
+            log4net.Util.LogLog.Debug(string.Format("type: {0} ", typeof(RabbitMQAppender)) + String.Format(format, args));
         }
     }
 }
