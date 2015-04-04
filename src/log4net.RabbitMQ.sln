@@ -16,8 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{651F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.Listener", "samples\log4net.RabbitMQ.Listener\log4net.RabbitMQ.Listener.csproj", "{103B0478-1305-4078-B86E-50F67A7E3336}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.1.2.10", "log4net.RabbitMQ.1.2.10\log4net.RabbitMQ.1.2.10.csproj", "{CC177186-EFF2-4C65-961F-9A9CA2495856}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.SampleWeb", "samples\log4net.RabbitMQ.SampleWeb\log4net.RabbitMQ.SampleWeb.csproj", "{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}"
 EndProject
 Global
@@ -60,16 +58,6 @@ Global
 		{103B0478-1305-4078-B86E-50F67A7E3336}.Release|Mixed Platforms.Build.0 = Release|x86
 		{103B0478-1305-4078-B86E-50F67A7E3336}.Release|x86.ActiveCfg = Release|x86
 		{103B0478-1305-4078-B86E-50F67A7E3336}.Release|x86.Build.0 = Release|x86
-		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{CC177186-EFF2-4C65-961F-9A9CA2495856}.Release|x86.ActiveCfg = Release|Any CPU
 		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
