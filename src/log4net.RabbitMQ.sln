@@ -1,8 +1,13 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{9D7884B2-7EDA-4640-95FA-4411C71C9D57}"
+	ProjectSection(SolutionItems) = preProject
+		paket.dependencies = paket.dependencies
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ", "log4net.RabbitMQ\log4net.RabbitMQ.csproj", "{4F906D5D-C6CC-4A95-B2F3-C7C4A5576A38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.Tests", "log4net.RabbitMQ.Tests\log4net.RabbitMQ.Tests.csproj", "{8D448B5B-0AFF-49EA-A464-F02D0CE54820}"
