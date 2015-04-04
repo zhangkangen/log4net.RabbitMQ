@@ -9,3 +9,4 @@ src/packages
 .bundle
 vendor
 build
+.paket
