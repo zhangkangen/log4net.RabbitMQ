@@ -66,7 +66,7 @@
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v3.5'">
       <ItemGroup>
         <Reference Include="log4net">
-          <HintPath>..\packages\log4net\lib\net35-client\log4net.dll</HintPath>
+          <HintPath>..\..\packages\log4net\lib\net35-client\log4net.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -75,7 +75,7 @@
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
       <ItemGroup>
         <Reference Include="log4net">
-          <HintPath>..\packages\log4net\lib\net40-client\log4net.dll</HintPath>
+          <HintPath>..\..\packages\log4net\lib\net40-client\log4net.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -84,7 +84,7 @@
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v2.0' Or $(TargetFrameworkVersion) == 'v3.0')">
       <ItemGroup>
         <Reference Include="log4net">
-          <HintPath>..\packages\log4net\lib\net20-full\log4net.dll</HintPath>
+          <HintPath>..\..\packages\log4net\lib\net20-full\log4net.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -93,7 +93,7 @@
     <When Condition="($(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6')) Or ($(TargetFrameworkIdentifier) == 'MonoAndroid') Or ($(TargetFrameworkIdentifier) == 'MonoTouch')">
       <ItemGroup>
         <Reference Include="log4net">
-          <HintPath>..\packages\log4net\lib\net40-full\log4net.dll</HintPath>
+          <HintPath>..\..\packages\log4net\lib\net40-full\log4net.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -102,7 +102,7 @@
   </Choose>
   <ItemGroup>
     <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\packages\NUnit\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
       <Paket>True</Paket>
     </Reference>
@@ -111,7 +111,7 @@
     <When Condition="($(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6')) Or ($(TargetFrameworkIdentifier) == 'MonoAndroid') Or ($(TargetFrameworkIdentifier) == 'MonoTouch')">
       <ItemGroup>
         <Reference Include="RabbitMQ.Client">
-          <HintPath>..\packages\RabbitMQ.Client\lib\net40\RabbitMQ.Client.dll</HintPath>
+          <HintPath>..\..\packages\RabbitMQ.Client\lib\net40\RabbitMQ.Client.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -120,12 +120,12 @@
   </Choose>
   <ItemGroup>
     <Reference Include="SharpTestsEx.Mvc">
-      <HintPath>..\packages\SharpTestsEx\lib\SharpTestsEx.Mvc.dll</HintPath>
+      <HintPath>..\..\packages\SharpTestsEx\lib\SharpTestsEx.Mvc.dll</HintPath>
       <Private>True</Private>
       <Paket>True</Paket>
     </Reference>
     <Reference Include="SharpTestsEx">
-      <HintPath>..\packages\SharpTestsEx\lib\SharpTestsEx.dll</HintPath>
+      <HintPath>..\..\packages\SharpTestsEx\lib\SharpTestsEx.dll</HintPath>
       <Private>True</Private>
       <Paket>True</Paket>
     </Reference>

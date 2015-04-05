@@ -5,9 +5,14 @@ require 'albacore/tasks/versionizer'
 
 Albacore::Tasks::Versionizer.new :versioning
 
+task :paket do
+  system 'src/.paket/paket.bootstrapper.exe', clr_command: true unless
+    File.exists? 'src/paket/paket.exe'
+end
+
 desc 'restore all nuget pkgs'
-task :restore do |r|
-  system("cd ./src && .paket/paket.exe restore")
+task :restore => :paket do |r|
+  system 'src/.paket/paket.exe', %w|install|, clr_command:true
 end
 
 desc 'build the solution'

@@ -9,3 +9,5 @@ src/packages
 .bundle
 vendor
 build
+paket.exe
+packages/
