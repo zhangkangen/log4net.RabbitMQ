@@ -2,6 +2,7 @@ require 'bundler/setup'
 
 require 'albacore'
 require 'albacore/tasks/versionizer'
+require 'albacore/tasks/release'
 
 Albacore::Tasks::Versionizer.new :versioning
 
@@ -26,7 +27,7 @@ directory 'build/pkg'
 nugets_pack :create_nugets => ['build/pkg', :versioning, :build] do |p|
   p.files   = FileList['src/log4net.RabbitMQ/*.csproj']
   p.out     = 'build/pkg'
-  p.exe     = './src/packages/NuGet.CommandLine/tools/NuGet.exe'
+  p.exe     = 'packages/NuGet.CommandLine/tools/NuGet.exe'
   p.with_metadata do |m|
     m.id = "log4net.RabbitMQAppender"
     m.description = 'Log4net appender for RabbitMQ'
@@ -59,5 +60,10 @@ task :nuget_publish => [:create_nugets] do |nuget|
   #system "./src/packages/NuGet.CommandLine/tools/NuGet.exe", "push", "build/pkg/log4net.1.2.10.RabbitMQAppender.#{ENV['NUGET_VERSION']}.nupkg", ENV["NugetOrgApiKey"], clr_command: true
 end
 
+Albacore::Tasks::Release.new :release,
+                             pkg_dir: 'build/pkg',
+                             depend_on: :create_nugets,
+                             nuget_exe: 'packages/NuGet.CommandLine/tools/NuGet.exe',
+                             api_key: ENV['NUGET_KEY']
 desc 'runs create_nugets'
 task :default => :create_nugets
