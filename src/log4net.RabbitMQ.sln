@@ -71,7 +71,6 @@ Global
 		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
