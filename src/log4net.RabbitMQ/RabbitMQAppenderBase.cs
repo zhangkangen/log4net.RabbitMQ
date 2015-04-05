@@ -276,7 +276,18 @@ namespace log4net.RabbitMQ
         private void InitMessagePriority(IBasicProperties basicProperties, LoggingEvent loggingEvent)
         {
             // the priority must resolve to 0 - 9. Otherwise stick with the default.
-            string sPriority = Format(loggingEvent);
+            string sPriority = null;
+
+            if (this.MessageProperties.Priority != null)
+            {
+                var sb = new StringBuilder();
+                using (var sw = new StringWriter(sb))
+                {
+                    this.MessageProperties.Priority.Format(sw, loggingEvent);
+                    sPriority = sw.ToString();
+                }
+            }
+
             int priority = -1;
             if (Int32.TryParse(sPriority, out priority))
             {
@@ -397,15 +408,19 @@ namespace log4net.RabbitMQ
                          new ShutdownEventArgs(ShutdownInitiator.Application, Constants.ReplySuccess, "closing appender"));
         }
 
-        private void OnModelShutdown(IModel model, ShutdownEventArgs reason)
+        private void OnModelShutdown(object sender, ShutdownEventArgs reason)
         {
+            var model = (IModel)sender;
             if (Object.ReferenceEquals(this._Model, model))
             {
                 this.ShutdownAmqp(this._Connection, reason);
             }
         }
-        private void ShutdownAmqp(IConnection connection, ShutdownEventArgs reason)
+
+        private void ShutdownAmqp(object sender, ShutdownEventArgs reason)
         {
+            var connection = (IConnection)sender;
+
             if (Object.ReferenceEquals(this._Connection, connection))
             {
                 // If this method is called through _Connection.ConnectionShutdown, calling Model.Close() 

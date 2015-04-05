@@ -15,9 +15,9 @@ namespace log4net.RabbitMQ.Listener
 		{
 			var factory = new ConnectionFactory
 				{
-					HostName = "localhost",
-					UserName = "guest",
-					Password = "guest",
+                    HostName = "localhost",
+                    UserName = "guest",
+                    Password = "guest",
 					Protocol = Protocols.DefaultProtocol
 				};
 
