@@ -38,28 +38,6 @@ nugets_pack :create_nugets => ['build/pkg', :versioning, :build] do |p|
   end
 end
 
-#nugets_pack :create_nugets => ['build/pkg', :versioning, :build] do |p|
-#  p.files   = FileList['src/log4net.RabbitMQ.1.2.10/*.csproj']
-#  p.out     = 'build/pkg'
-#  p.exe     = './src/packages/NuGet.CommandLine/tools/NuGet.exe'
-#  p.with_metadata do |m|
-#    m.id = "log4net.1.2.10.RabbitMQAppender"
-#    m.description = 'Log4net 1.2.10 appender for RabbitMQ'
-#    m.authors = 'Henrik Feldt'
-#    m.project_url = 'https://github.com/haf/log4net.RabbitMQ'
-#    m.version = ENV['NUGET_VERSION']
-#    m.tags = 'rabbitmq log4net'
-#    m.add_dependency "log4net", "[1.2.10]"
-#  end
-#end
-
-desc 'publish nugets'
-task :nuget_publish => [:create_nugets] do |nuget|
-  raise "No NugetOrgApiKey environment variable set!" unless ENV['NugetOrgApiKey']
-  system "./src/packages/NuGet.CommandLine/tools/NuGet.exe", "push", "build/pkg/log4net.RabbitMQAppender.#{ENV['NUGET_VERSION']}.nupkg", ENV["NugetOrgApiKey"], clr_command: true
-  #system "./src/packages/NuGet.CommandLine/tools/NuGet.exe", "push", "build/pkg/log4net.1.2.10.RabbitMQAppender.#{ENV['NUGET_VERSION']}.nupkg", ENV["NugetOrgApiKey"], clr_command: true
-end
-
 Albacore::Tasks::Release.new :release,
                              pkg_dir: 'build/pkg',
                              depend_on: :create_nugets,
