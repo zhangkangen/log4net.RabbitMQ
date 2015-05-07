@@ -76,7 +76,7 @@ This configuration demonstrates usage of the properties from above:
 			<priority type="log4net.Layout.PatternLayout">
 				<conversionPattern value="0" />
 			</priority>
-			<extendedProperties value="true" />
+			<ExtendedData value="true" />
 		</messageProperties>
 
 		<layout type="log4net.Layout.PatternLayout">
