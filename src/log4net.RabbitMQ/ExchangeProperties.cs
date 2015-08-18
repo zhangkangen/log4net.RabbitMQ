@@ -51,7 +51,7 @@ namespace log4net.RabbitMQ
             this.Name = "app-logging";
             this.ExchangeType = RabbitMQExchangeType.Topic;
             this.Durable = false;
-            this.Durable = true;
+            this.AutoDelete = true;
             this.Bindings = new List<ExchangeBinding>();
         }
 
