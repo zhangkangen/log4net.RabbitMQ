@@ -31,9 +31,17 @@ namespace log4net.RabbitMQ
         /// 	Gets or sets the exchange durability.
         /// </summary>
         /// <remarks>
-        /// 	Default is 'topic'
+        /// 	Default is false
         /// </remarks>
         public bool Durable { get; set; }
+
+        /// <summary>
+        /// 	Gets or sets the exchange auto-delete feature.
+        /// </summary>
+        /// <remarks>
+        /// 	Default is true
+        /// </remarks>
+        public bool AutoDelete { get; set; }
 
         /// <summary>
         /// Default constructor.
@@ -43,6 +51,7 @@ namespace log4net.RabbitMQ
             this.Name = "app-logging";
             this.ExchangeType = RabbitMQExchangeType.Topic;
             this.Durable = false;
+            this.Durable = true;
             this.Bindings = new List<ExchangeBinding>();
         }
 

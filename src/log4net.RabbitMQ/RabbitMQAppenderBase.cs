@@ -366,7 +366,7 @@ namespace log4net.RabbitMQ
 
             if (_Model != null)
             {
-                _Model.ExchangeDeclare(this.ExchangeProperties.Name, this.ExchangeProperties.ExchangeType, this.ExchangeProperties.Durable);
+                _Model.ExchangeDeclare(this.ExchangeProperties.Name, this.ExchangeProperties.ExchangeType, this.ExchangeProperties.Durable, this.ExchangeProperties.AutoDelete, null);
 
                 foreach (ExchangeBinding exchangeBinding in this.ExchangeProperties.Bindings)
                 {
