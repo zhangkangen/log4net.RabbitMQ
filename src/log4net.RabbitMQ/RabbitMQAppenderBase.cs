@@ -241,7 +241,7 @@ namespace log4net.RabbitMQ
             string topic = GetTopic(loggingEvent);
 
             _Model.BasicPublish(this._ExchangeProperties.Name, topic,
-                    true, false, basicProperties,
+                    true, basicProperties,
                     message);
 
         }
