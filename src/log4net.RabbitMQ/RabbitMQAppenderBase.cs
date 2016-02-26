@@ -255,6 +255,7 @@ namespace log4net.RabbitMQ
             basicProperties.AppId = this.MessageProperties.AppId ?? loggingEvent.LoggerName;
 
             basicProperties.SetPersistent(this._MessageProperties.Persistent);
+
             this.InitMessagePriority(basicProperties, loggingEvent);
 
             basicProperties.Timestamp = new AmqpTimestamp(
