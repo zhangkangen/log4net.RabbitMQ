@@ -1,5 +1,7 @@
-﻿using System;
+﻿using log4net.Config;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -14,8 +16,12 @@ namespace log4net.RabbitMQ.SampleWeb
 
     public class MvcApplication : System.Web.HttpApplication
     {
+        private static readonly ILog _Logger = LogManager.GetLogger(typeof(MvcApplication));
+
         protected void Application_Start()
         {
+            XmlConfigurator.ConfigureAndWatch(new FileInfo(Server.MapPath("~/log4net.config")));
+
             AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);
@@ -23,5 +29,20 @@ namespace log4net.RabbitMQ.SampleWeb
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
+
+        protected void Application_Error()
+        {
+            var lastError = Server.GetLastError();
+            Server.ClearError();
+
+            _Logger.Error("app error", lastError);
+        }
+
+        protected void Application_End()
+        {
+            _Logger.Info("shutting down application");
+            LogManager.Shutdown();
+        }
+
     }
 }
