@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ", "log4net.RabbitMQ\log4net.RabbitMQ.csproj", "{4F906D5D-C6CC-4A95-B2F3-C7C4A5576A38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.Tests", "log4net.RabbitMQ.Tests\log4net.RabbitMQ.Tests.csproj", "{8D448B5B-0AFF-49EA-A464-F02D0CE54820}"
@@ -17,11 +15,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.Listener", "samples\log4net.RabbitMQ.Listener\log4net.RabbitMQ.Listener.csproj", "{103B0478-1305-4078-B86E-50F67A7E3336}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.SampleWeb", "samples\log4net.RabbitMQ.SampleWeb\log4net.RabbitMQ.SampleWeb.csproj", "{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D9093A0A-2105-41E9-8ACF-765DEF7178AD}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
