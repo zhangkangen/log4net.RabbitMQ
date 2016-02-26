@@ -108,7 +108,8 @@ namespace log4net.RabbitMQ
 
         // Copied from https://github.com/rabbitmq/rabbitmq-dotnet-client/blob/rabbitmq_v3_3_2/projects/client/RabbitMQ.Client/src/client/api/Protocols.cs
         // as it's not part of the API anymore
-        private static IProtocol SafeLookup(string name) {
+        private static IProtocol SafeLookup(string name)
+        {
             PropertyInfo pi = typeof(Protocols).GetProperty(name,
                                                             BindingFlags.Public |
                                                             BindingFlags.Static);
@@ -366,7 +367,11 @@ namespace log4net.RabbitMQ
 
             if (_Model != null)
             {
-                _Model.ExchangeDeclare(this.ExchangeProperties.Name, this.ExchangeProperties.ExchangeType, this.ExchangeProperties.Durable, this.ExchangeProperties.AutoDelete, null);
+                _Model.ExchangeDeclare(this.ExchangeProperties.Name,
+                    this.ExchangeProperties.ExchangeType,
+                    this.ExchangeProperties.Durable,
+                    this.ExchangeProperties.AutoDelete,
+                    null);
 
                 foreach (ExchangeBinding exchangeBinding in this.ExchangeProperties.Bindings)
                 {
@@ -395,7 +400,8 @@ namespace log4net.RabbitMQ
 
         private SslOption _Ssl = new SslOption();
 
-        protected SslOption Ssl {
+        protected SslOption Ssl
+        {
             get { return _Ssl; }
             set { _Ssl = value; }
         }
