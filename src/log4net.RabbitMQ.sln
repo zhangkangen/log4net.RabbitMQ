@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{651F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.Listener", "samples\log4net.RabbitMQ.Listener\log4net.RabbitMQ.Listener.csproj", "{103B0478-1305-4078-B86E-50F67A7E3336}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.SampleWeb", "samples\log4net.RabbitMQ.SampleWeb\log4net.RabbitMQ.SampleWeb.csproj", "{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.SampleWeb", "log4net.RabbitMQ.SampleWeb\log4net.RabbitMQ.SampleWeb.csproj", "{C79326BC-9641-4036-A669-98939491247C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,21 +56,22 @@ Global
 		{103B0478-1305-4078-B86E-50F67A7E3336}.Release|Mixed Platforms.Build.0 = Release|x86
 		{103B0478-1305-4078-B86E-50F67A7E3336}.Release|x86.ActiveCfg = Release|x86
 		{103B0478-1305-4078-B86E-50F67A7E3336}.Release|x86.Build.0 = Release|x86
-		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4}.Release|x86.ActiveCfg = Release|Any CPU
+		{C79326BC-9641-4036-A669-98939491247C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C79326BC-9641-4036-A669-98939491247C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C79326BC-9641-4036-A669-98939491247C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C79326BC-9641-4036-A669-98939491247C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C79326BC-9641-4036-A669-98939491247C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C79326BC-9641-4036-A669-98939491247C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C79326BC-9641-4036-A669-98939491247C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C79326BC-9641-4036-A669-98939491247C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C79326BC-9641-4036-A669-98939491247C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C79326BC-9641-4036-A669-98939491247C}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{103B0478-1305-4078-B86E-50F67A7E3336} = {651F2627-B730-48E0-B49B-E8B6CA89811D}
-		{EAE398C0-0F21-4CA7-BC39-18F47CC1E8E4} = {651F2627-B730-48E0-B49B-E8B6CA89811D}
+		{C79326BC-9641-4036-A669-98939491247C} = {651F2627-B730-48E0-B49B-E8B6CA89811D}
 	EndGlobalSection
 EndGlobal
