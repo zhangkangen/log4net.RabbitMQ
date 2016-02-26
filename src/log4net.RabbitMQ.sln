@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.Listener",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.SampleWeb", "log4net.RabbitMQ.SampleWeb\log4net.RabbitMQ.SampleWeb.csproj", "{C79326BC-9641-4036-A669-98939491247C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log4net.RabbitMQ.Console", "log4net.RabbitMQ.Console\log4net.RabbitMQ.Console.csproj", "{8C0102BC-0123-4911-83FF-3F1E9BF1770E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,16 @@ Global
 		{C79326BC-9641-4036-A669-98939491247C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C79326BC-9641-4036-A669-98939491247C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C79326BC-9641-4036-A669-98939491247C}.Release|x86.ActiveCfg = Release|Any CPU
+		{8C0102BC-0123-4911-83FF-3F1E9BF1770E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C0102BC-0123-4911-83FF-3F1E9BF1770E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C0102BC-0123-4911-83FF-3F1E9BF1770E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8C0102BC-0123-4911-83FF-3F1E9BF1770E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8C0102BC-0123-4911-83FF-3F1E9BF1770E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8C0102BC-0123-4911-83FF-3F1E9BF1770E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C0102BC-0123-4911-83FF-3F1E9BF1770E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C0102BC-0123-4911-83FF-3F1E9BF1770E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8C0102BC-0123-4911-83FF-3F1E9BF1770E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8C0102BC-0123-4911-83FF-3F1E9BF1770E}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,5 +85,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{103B0478-1305-4078-B86E-50F67A7E3336} = {651F2627-B730-48E0-B49B-E8B6CA89811D}
 		{C79326BC-9641-4036-A669-98939491247C} = {651F2627-B730-48E0-B49B-E8B6CA89811D}
+		{8C0102BC-0123-4911-83FF-3F1E9BF1770E} = {651F2627-B730-48E0-B49B-E8B6CA89811D}
 	EndGlobalSection
 EndGlobal

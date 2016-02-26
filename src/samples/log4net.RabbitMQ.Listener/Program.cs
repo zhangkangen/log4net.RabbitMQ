@@ -15,9 +15,9 @@ namespace log4net.RabbitMQ.Listener
         {
             var factory = new ConnectionFactory
                 {
-                    HostName = "localhost",
-                    UserName = "guest",
-                    Password = "guest",
+                    HostName = "192.168.1.115",
+                    UserName = "test",
+                    Password = "123456",
                     Protocol = Protocols.DefaultProtocol
                 };
 
@@ -39,7 +39,7 @@ namespace log4net.RabbitMQ.Listener
 										{"x-expires", 30*60000} // expire queue after 30 minutes, see http://www.rabbitmq.com/extensions.html
 									};
 
-                                m.ExchangeDeclare(exchange, ExchangeType.Topic, false, false, null);
+                                m.ExchangeDeclare(exchange, ExchangeType.Topic, false, true, null);
                                 var q = m.QueueDeclare("", false, true, false, props);
                                 m.QueueBind(q, exchange, "#");
                                 m.BasicConsume(q, true, consumer);
